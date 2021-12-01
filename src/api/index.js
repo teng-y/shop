@@ -7,10 +7,19 @@
 
 //1、引入axios，也就是引入ajax.js这个文件，然后发送请求
 import ajax from './ajax'
+import mockAjax from './mockAjax'
 //2、将发送请求的操作封装到函数中，向外暴露
 // export function reqCategoryListDate(){
 //     return ajax.get('/api/product/getBaseCategoryList')
 // }
 
 //三级分类导航
-export const reqCategoryListDate = ()=> ajax.get('/api/product/getBaseCategoryList') 
+export const reqCategoryListDate = () => ajax.get('/api/product/getBaseCategoryList')
+
+//获取轮播图片
+export const reqBannerListData = () => mockAjax.get('/banner')
+export const reqFloorListData = () => mockAjax.get('/floor')
+
+
+//
+export const reqSearchGoodsData = (searchParams)=>ajax.post('/api/list',searchParams)

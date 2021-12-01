@@ -13,14 +13,12 @@
     <Like></Like>
     <!--楼层-->
     <Floor></Floor>
-    <Floor></Floor>
     <!--商标-->
     <Brand></Brand>
   </div>
 </template>
 
 <script>
-import TypeNav from "./TypeNav/index.vue";
 import ListContainer from "./ListContainer/index.vue";
 import Recommend from "./Recommend/index.vue";
 import Rank from "./Rank/index.vue";
@@ -30,7 +28,6 @@ import Brand from './Brand/index.vue'
 export default {
   name: "Home",
   components: {
-    TypeNav,
     ListContainer,
     Recommend,
     Rank,

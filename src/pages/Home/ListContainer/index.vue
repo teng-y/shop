@@ -4,10 +4,10 @@
     <div class="sortList clearfix">
       <div class="center">
         <!--banner轮播-->
-        <div class="swiper-container" id="mySwiper">
+        <div class="swiper-container banner-container" id="mySwiper">
           <div class="swiper-wrapper">
-            <div class="swiper-slide">
-              <img src="./images/banner1.jpg" />
+            <div class="swiper-slide" v-for="item in bannerList" :key="item.id">
+              <img :src="item.imgUrl" />
             </div>
             <!-- <div class="swiper-slide">
               <img src="./images/banner2.jpg" />
@@ -17,14 +17,14 @@
             </div>
             <div class="swiper-slide">
               <img src="./images/banner4.jpg" />
-            </div> -->
+            </div>-->
           </div>
           <!-- 如果需要分页器 -->
-          <div class="swiper-pagination">123</div>
+          <div class="swiper-pagination"></div>
 
           <!-- 如果需要导航按钮 -->
-          <div class="swiper-button-prev">1235</div>
-          <div class="swiper-button-next">1234</div>
+          <div class="swiper-button-prev"></div>
+          <div class="swiper-button-next"></div>
         </div>
       </div>
       <div class="right">
@@ -111,8 +111,42 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
+import "swiper/css/swiper.min.css";
+import Swiper from "swiper";
 export default {
-  name: "ListContainer"
+  name: "ListContainer",
+  computed: {
+    ...mapState("home", ["bannerList"])
+  },
+  mounted() {
+    this.$store.dispatch("home/getBannerListData");
+  },
+  watch: {
+    bannerList() {
+      this.$nextTick(() => {
+        new Swiper(".banner-container", {
+          loop: true, // 循环模式选项
+
+          // 如果需要分页器
+          pagination: {
+            el: ".swiper-pagination"
+          },
+
+          // 如果需要前进后退按钮
+          navigation: {
+            nextEl: ".swiper-button-next",
+            prevEl: ".swiper-button-prev"
+          },
+
+          // 如果需要滚动条
+          scrollbar: {
+            el: ".swiper-scrollbar"
+          }
+        });
+      });
+    }
+  }
 };
 </script>
 

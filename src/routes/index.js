@@ -44,7 +44,10 @@ const router = new VueRouter({
     {
       name:'home',
       path: '/home',
-      component: Home
+      component: Home,
+      meta:{
+        isShowTypeNav:true
+      }
     },
     {
       name:'login',

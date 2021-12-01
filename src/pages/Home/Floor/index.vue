@@ -1,31 +1,13 @@
 <template>
   <!--楼层-->
   <div class="floor">
-    <div class="py-container">
+    <div class="py-container" v-for="item in floorList" :key="item.id">
       <div class="title clearfix">
         <h3 class="fl">家用电器</h3>
         <div class="fr">
           <ul class="nav-tabs clearfix">
-            <li class="active">
-              <a href="#tab1" data-toggle="tab">热门</a>
-            </li>
-            <li>
-              <a href="#tab2" data-toggle="tab">大家电</a>
-            </li>
-            <li>
-              <a href="#tab3" data-toggle="tab">生活电器</a>
-            </li>
-            <li>
-              <a href="#tab4" data-toggle="tab">厨房电器</a>
-            </li>
-            <li>
-              <a href="#tab5" data-toggle="tab">应季电器</a>
-            </li>
-            <li>
-              <a href="#tab6" data-toggle="tab">空气/净水</a>
-            </li>
-            <li>
-              <a href="#tab7" data-toggle="tab">高端电器</a>
+            <li class="active" v-for="nav in item.navList" :key="nav.text">
+              <a href="#tab1" data-toggle="tab">{{nav.text}}</a>
             </li>
           </ul>
         </div>
@@ -35,20 +17,15 @@
           <div class="floor-1">
             <div class="blockgary">
               <ul class="jd-list">
-                <li>节能补贴</li>
-                <li>4K电视</li>
-                <li>空气净化器</li>
-                <li>IH电饭煲</li>
-                <li>滚筒洗衣机</li>
-                <li>电热水器</li>
+                <li v-for="item3 in item.keywords" :key="item3">{{item3}}</li>
               </ul>
               <img src="./images/floor-1-1.png" />
             </div>
             <div class="floorBanner">
-              <div class="swiper-container" id="floor1Swiper">
+              <div class="swiper-container floor-container" id="floor1Swiper">
                 <div class="swiper-wrapper">
-                  <div class="swiper-slide">
-                    <img src="./images/floor-1-b01.png" />
+                  <div class="swiper-slide" v-for="img1 in item.carouselList" :key="img1.id">
+                    <img :src="img1.imgUrl" />
                   </div>
                   <!-- <div class="swiper-slide">
                                         <img src="./images/floor-1-b02.png">
@@ -94,7 +71,40 @@
 </template>
 
 <script>
-export default {};
+import { mapState } from 'vuex';
+import Swiper from 'swiper'
+import 'swiper/css/swiper.min.css'
+export default {
+  name:'Floor',
+  computed:{
+    ...mapState('home',['floorList'])
+  },
+  mounted(){
+    this.$store.dispatch('home/getFloorListData')
+
+    var mySwiper = new Swiper('.floor-container', {
+      // direction: "vertical", // 垂直切换选项
+      loop: true, // 循环模式选项
+      // autoplay: true,
+      // delay: 1000,
+      autoplay: {
+        delay: 2000, //1秒切换一次
+        disableOnInteraction:false
+      },
+      // 如果需要分页器
+      pagination: {
+        el: ".swiper-pagination",
+        clickable :true,
+      },
+
+      // 如果需要前进后退按钮
+      navigation: {
+        nextEl: ".swiper-button-next",
+        prevEl: ".swiper-button-prev",
+      },
+    });
+  }
+};
 </script>
 
 <style lang="less" scoped>

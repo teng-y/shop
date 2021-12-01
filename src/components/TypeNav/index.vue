@@ -2,23 +2,35 @@
   <!-- 商品分类导航 -->
   <div class="type-nav">
     <div class="container">
-      <div class="nav-left">
-        <h2 class="all">全部商品分类</h2>
-        <div class="sort">
-          <div class="all-sort-list2" @click='btnSearch'>
-            <div class="item"  v-for="c1 in categoryList.slice(0,-2)" :key="c1.categoryID">
+      <div class="nav-left"  @mouseleave="handlerLeave">
+        <h2 class="all" @mouseenter="isShowNav=true">全部商品分类</h2>
+        <div class="sort" v-show="isShowNav">
+          <div class="all-sort-list2" @click="btnSearch">
+            <div class="item" v-for="c1 in categoryList.slice(0,-2)" :key="c1.categoryId">
               <h3>
-                <a href>{{c1.categoryName}}</a>
+                <a
+                  data-level="1"
+                  :data-id="c1.categoryId"
+                  :data-name="c1.categoryName"
+                >{{c1.categoryName}}</a>
               </h3>
               <div class="item-list clearfix">
                 <div class="subitem">
-                  <dl class="fore" v-for="c2 in c1.categoryChild" :key="c2.categoryID">
+                  <dl class="fore" v-for="c2 in c1.categoryChild" :key="c2.categoryId">
                     <dt>
-                      <a href>{{c2.categoryName}}</a>
+                      <a
+                        data-level="2"
+                        :data-id="c2.categoryId"
+                        :data-name="c2.categoryName"
+                      >{{c2.categoryName}}</a>
                     </dt>
                     <dd>
-                      <em v-for="c3 in c2.categoryChild" :key="c3.categoryID">
-                        <a href>{{c3.categoryName}}</a>
+                      <em v-for="c3 in c2.categoryChild" :key="c3.categoryId">
+                        <a
+                          data-level="3"
+                          :data-id="c3.categoryId"
+                          :data-name="c3.categoryName"
+                        >{{c3.categoryName}}</a>
                       </em>
                     </dd>
                   </dl>
@@ -46,19 +58,42 @@
 import { mapState } from "vuex";
 export default {
   name: "TypeNav",
+  data() {
+    return {
+      isShowNav: true,
+    };
+  },
   mounted() {
     //相当于是全局形式的派发
     // this.$store.dispatch('getCategoryListDate')
     //使用模块化的方式进行派发
     this.$store.dispatch("home/getCategoryListDate");
+    if(!this.$route.meta.isShowTypeNav){
+      this.isShowNav = false;
+    }
   },
   computed: {
     //使用mapState时，第一项应该指定模块名称
     ...mapState("home", ["categoryList"])
   },
-  methods:{
-    btnSearch(){
-      this.$router.push('/search')
+  methods: {
+    btnSearch(e) {
+      let { level, id, name } = e.target.dataset;
+      if (!level) return; //判断点击的是否为空白地方，是就结束代码执行
+      let { keywords } = this.$route.query;
+      this.$router.push({
+        name: "search",
+        query: {
+          keywords,
+          ["category" + level + "Id"]: id,
+          categoryName: name
+        }
+      });
+    },
+    handlerLeave() {
+      if (!this.$route.meta.isShowTypeNav) {
+        this.isShowNav = false;
+      }
     }
   }
 };
