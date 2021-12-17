@@ -2,33 +2,24 @@
   <!-- 商品分类导航 -->
   <div class="type-nav">
     <div class="container">
-      <div class="nav-left"  @mouseleave="handlerLeave">
+      <div class="nav-left" @mouseleave="handlerLeave">
         <h2 class="all" @mouseenter="isShowNav=true">全部商品分类</h2>
         <div class="sort" v-show="isShowNav">
           <div class="all-sort-list2" @click="btnSearch">
             <div class="item" v-for="c1 in categoryList.slice(0,-2)" :key="c1.categoryId">
               <h3>
-                <a
-                  data-level="1"
-                  :data-id="c1.categoryId"
-                  :data-name="c1.categoryName"
-                >{{c1.categoryName}}</a>
+                <a :data-id1="c1.categoryId" :data-name="c1.categoryName">{{c1.categoryName}}</a>
               </h3>
               <div class="item-list clearfix">
                 <div class="subitem">
                   <dl class="fore" v-for="c2 in c1.categoryChild" :key="c2.categoryId">
                     <dt>
-                      <a
-                        data-level="2"
-                        :data-id="c2.categoryId"
-                        :data-name="c2.categoryName"
-                      >{{c2.categoryName}}</a>
+                      <a :data-id2="c2.categoryId" :data-name="c2.categoryName">{{c2.categoryName}}</a>
                     </dt>
                     <dd>
                       <em v-for="c3 in c2.categoryChild" :key="c3.categoryId">
                         <a
-                          data-level="3"
-                          :data-id="c3.categoryId"
+                          :data-id3="c3.categoryId"
                           :data-name="c3.categoryName"
                         >{{c3.categoryName}}</a>
                       </em>
@@ -60,15 +51,16 @@ export default {
   name: "TypeNav",
   data() {
     return {
-      isShowNav: true,
+      isShowNav: true
     };
   },
   mounted() {
     //相当于是全局形式的派发
     // this.$store.dispatch('getCategoryListDate')
     //使用模块化的方式进行派发
-    this.$store.dispatch("home/getCategoryListDate");
-    if(!this.$route.meta.isShowTypeNav){
+    // this.$store.dispatch("home/getCategoryListDate");
+    // 发请求在app组件中发，可以优化代码
+    if (!this.$route.meta.isShowTypeNav) {
       this.isShowNav = false;
     }
   },
@@ -78,17 +70,28 @@ export default {
   },
   methods: {
     btnSearch(e) {
-      let { level, id, name } = e.target.dataset;
-      if (!level) return; //判断点击的是否为空白地方，是就结束代码执行
-      let { keywords } = this.$route.query;
-      this.$router.push({
-        name: "search",
-        query: {
-          keywords,
-          ["category" + level + "Id"]: id,
-          categoryName: name
-        }
-      });
+      let { id1, id2, id3, name } = e.target.dataset;
+      if (!name) return; //判断点击的是否为空白地方，是就结束代码执行
+
+      let location = {
+        name: "search"
+      };
+      let query = {
+        categoryName: name
+      };
+      if (id1) {
+        query.category1Id = id1;
+      } else if (id2) {
+        query.category2Id = id2;
+      } else {
+        query.category3Id = id3;
+      }
+
+      location.query = query;
+
+      // 判断之前有没有params参数，合并参数
+      location.params = this.$route.params;
+      this.$router.push(location);
     },
     handlerLeave() {
       if (!this.$route.meta.isShowTypeNav) {
@@ -210,6 +213,8 @@ export default {
           }
 
           &:hover {
+            background-color: rgb(255, 180, 192);
+            cursor: pointer;
             .item-list {
               display: block;
             }

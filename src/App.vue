@@ -12,7 +12,12 @@ import Header from "./components/Header";
 import Footer from './components/Footer'
 export default {
   name:"App",
-  components:{Header,Footer}
+  components:{Header,Footer},
+  mounted(){
+    //typeNav发送请求
+    this.$store.dispatch("home/getCategoryListDate");
+  }
+  
 }
 </script>
 

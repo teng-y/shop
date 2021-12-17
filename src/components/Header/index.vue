@@ -6,15 +6,19 @@
       <div class="container">
         <div class="loginList">
           <p>尚品汇欢迎您！</p>
-          <p>
+          <p v-if="userInfo.name">
+            {{userInfo.name}}
+            <button @click="logout">退出登录</button>
+          </p>
+          <p v-else>
             <span>请</span>
             <router-link to="/Login">登录</router-link>
             <router-link to="/Register" class="register">免费注册</router-link>
           </p>
         </div>
         <div class="typeList">
-          <a href="###">我的订单</a>
-          <a href="###">我的购物车</a>
+          <router-link to="/center">我的订单</router-link>
+          <router-link to="/shopcart">我的购物车</router-link>
           <a href="###">我的尚品汇</a>
           <a href="###">尚品汇会员</a>
           <a href="###">企业采购</a>
@@ -42,6 +46,8 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
+// import { mapState } from "vuex";
 export default {
   name: "Header",
   data() {
@@ -49,18 +55,40 @@ export default {
       keyword: ""
     };
   },
+  computed:{
+    ...mapState('user',['userInfo'])
+  },
   methods: {
+    //搜索框跳转
     btnSearch() {
-      let {query} = this.$route
-      console.log(query);
-      console.log(this.keyword);
-      this.$router.push({
-        name: "search",
-        query: {
-          keyword: this.keyword,
-          ...query
-        }
-      });
+      // let {query} = this.$route
+      // console.log(query);
+      // console.log(this.keyword);
+      // this.$router.push({
+      //   name: "search",
+      //   query: {
+      //     ...query,
+      //     keyword: this.keyword,
+      //   }
+      // });
+      let location = {
+        name:'search'
+      }
+      let params = {keyword:this.keyword || undefined}
+      location.params = params
+      // console.log(this.$route.query);
+      location.query = this.$route.query
+      // console.log(location);
+      this.$router.push(location)
+    },
+    //退出登录
+    async logout(){
+      try {
+        await this.$store.dispatch('user/userLogout')
+        this.$router.push('/')
+      } catch (error) {
+        alert('退出登录失败')
+      }
     }
   }
 };

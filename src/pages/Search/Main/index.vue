@@ -10,18 +10,21 @@
           </li>
         </ul>
         <ul class="fl sui-tag">
-          <li class="with-x">手机</li>
-          <li class="with-x">
-            iphone
-            <i>×</i>
+          <li class="with-x" v-show="searchParams.categoryName">
+            {{searchParams.categoryName}}
+            <i @click="delCateName">×</i>
           </li>
-          <li class="with-x">
-            华为
-            <i>×</i>
+          <li class="with-x" v-show="searchParams.keyword">
+            {{searchParams.keyword}}
+            <i @click="delKeyword">×</i>
           </li>
-          <li class="with-x">
-            OPPO
-            <i>×</i>
+          <li class="with-x" v-show="searchParams.trademark">
+            {{trademarkName}}
+            <i @click="delTrademark">×</i>
+          </li>
+          <li class="with-x" v-for="(prop,index) in searchParams.props" :key="prop">
+            {{`${prop.split(':')[2]}:${prop.split(':')[1]}`}}
+            <i @click="delProp(index)">×</i>
           </li>
         </ul>
       </div>
@@ -31,129 +34,20 @@
           <div class="fl key brand">品牌</div>
           <div class="value logos">
             <ul class="logo-list">
-              <li v-for="trad in trademarkList" :key="trad.tmId">{{trad.tmName}}</li>     
+              <li
+                v-for="trad in trademarkList"
+                :key="trad.tmId"
+                @click="handleTrademark(trad)"
+              >{{trad.tmName}}</li>
             </ul>
           </div>
         </div>
-        <div class="type-wrap">
-          <div class="fl key">网络制式</div>
+        <div class="type-wrap" v-for="attr in attrsList" :key="attr.attrId">
+          <div class="fl key">{{attr.attrName}}</div>
           <div class="fl value">
             <ul class="type-list">
-              <li>
-                <a>GSM（移动/联通2G）</a>
-              </li>
-              <li>
-                <a>电信2G</a>
-              </li>
-              <li>
-                <a>电信3G</a>
-              </li>
-              <li>
-                <a>移动3G</a>
-              </li>
-              <li>
-                <a>联通3G</a>
-              </li>
-              <li>
-                <a>联通4G</a>
-              </li>
-              <li>
-                <a>电信3G</a>
-              </li>
-              <li>
-                <a>移动3G</a>
-              </li>
-              <li>
-                <a>联通3G</a>
-              </li>
-              <li>
-                <a>联通4G</a>
-              </li>
-            </ul>
-          </div>
-          <div class="fl ext"></div>
-        </div>
-        <div class="type-wrap">
-          <div class="fl key">显示屏尺寸</div>
-          <div class="fl value">
-            <ul class="type-list">
-              <li>
-                <a>4.0-4.9英寸</a>
-              </li>
-              <li>
-                <a>4.0-4.9英寸</a>
-              </li>
-            </ul>
-          </div>
-          <div class="fl ext"></div>
-        </div>
-        <div class="type-wrap">
-          <div class="fl key">摄像头像素</div>
-          <div class="fl value">
-            <ul class="type-list">
-              <li>
-                <a>1200万以上</a>
-              </li>
-              <li>
-                <a>800-1199万</a>
-              </li>
-              <li>
-                <a>1200-1599万</a>
-              </li>
-              <li>
-                <a>1600万以上</a>
-              </li>
-              <li>
-                <a>无摄像头</a>
-              </li>
-            </ul>
-          </div>
-          <div class="fl ext"></div>
-        </div>
-        <div class="type-wrap">
-          <div class="fl key">价格</div>
-          <div class="fl value">
-            <ul class="type-list">
-              <li>
-                <a>0-500元</a>
-              </li>
-              <li>
-                <a>500-1000元</a>
-              </li>
-              <li>
-                <a>1000-1500元</a>
-              </li>
-              <li>
-                <a>1500-2000元</a>
-              </li>
-              <li>
-                <a>2000-3000元</a>
-              </li>
-              <li>
-                <a>3000元以上</a>
-              </li>
-            </ul>
-          </div>
-          <div class="fl ext"></div>
-        </div>
-        <div class="type-wrap">
-          <div class="fl key">更多筛选项</div>
-          <div class="fl value">
-            <ul class="type-list">
-              <li>
-                <a>特点</a>
-              </li>
-              <li>
-                <a>系统</a>
-              </li>
-              <li>
-                <a>手机内存</a>
-              </li>
-              <li>
-                <a>单卡双卡</a>
-              </li>
-              <li>
-                <a>其他</a>
+              <li v-for="attrValue in attr.attrValueList" :key="attrValue">
+                <a @click="handleAttr(attrValue,attr)">{{attrValue}}</a>
               </li>
             </ul>
           </div>
@@ -165,23 +59,27 @@
         <div class="sui-navbar">
           <div class="navbar-inner filter">
             <ul class="sui-nav">
-              <li class="active">
-                <a href="#">综合</a>
+              <!-- 综合高亮 -->
+              <li :class="{active:!isPrice}" @click="changeOrder(1)">
+                <a>
+                  综合
+                  <span
+                    class="iconfont icon-shangfan"
+                    :class="{'icon-shangfan':isUp,'icon-xiafan':!isUp}"
+                    v-show="!isPrice"
+                  ></span>
+                </a>
               </li>
-              <li>
-                <a href="#">销量</a>
-              </li>
-              <li>
-                <a href="#">新品</a>
-              </li>
-              <li>
-                <a href="#">评价</a>
-              </li>
-              <li>
-                <a href="#">价格⬆</a>
-              </li>
-              <li>
-                <a href="#">价格⬇</a>
+              <!-- 价格高亮 -->
+              <li :class="{active:isPrice}" @click="changeOrder(2)">
+                <a>
+                  价格
+                  <span
+                    class="iconfont icon-shangfan"
+                    :class="{'icon-shangfan':isUp,'icon-xiafan':!isUp}"
+                    v-show="isPrice"
+                  ></span>
+                </a>
               </li>
             </ul>
           </div>
@@ -191,22 +89,18 @@
             <li class="yui3-u-1-5" v-for="good in goodsList" :key="good.id">
               <div class="list-wrap">
                 <div class="p-img">
-                  <a href="item.html" target="_blank">
-                    <img :src="good.defaultImg" />
-                  </a>
+                  <router-link :to="`/detail/${good.id}`">
+                    <img v-lazy="good.defaultImg" />
+                  </router-link>
                 </div>
                 <div class="price">
                   <strong>
-                    <em>¥</em>
+                    <em>¥&nbsp;&nbsp;</em>
                     <i>{{good.price}}</i>
                   </strong>
                 </div>
                 <div class="attr">
-                  <a
-                    target="_blank"
-                    href="item.html"
-                    :title="good.title"
-                  >{{good.title}}</a>
+                  <router-link :to="`/detail/${good.id}`" :title="good.title">{{good.title}}</router-link>
                 </div>
                 <div class="commit">
                   <i class="command">
@@ -226,50 +120,100 @@
             </li>
           </ul>
         </div>
-        <div class="fr page">
-          <div class="sui-pagination clearfix">
-            <ul>
-              <li class="prev disabled">
-                <a href="#">«上一页</a>
-              </li>
-              <li class="active">
-                <a href="#">1</a>
-              </li>
-              <li>
-                <a href="#">2</a>
-              </li>
-              <li>
-                <a href="#">3</a>
-              </li>
-              <li>
-                <a href="#">4</a>
-              </li>
-              <li>
-                <a href="#">5</a>
-              </li>
-              <li class="dotted">
-                <span>...</span>
-              </li>
-              <li class="next">
-                <a href="#">下一页»</a>
-              </li>
-            </ul>
-            <div>
-              <span>共10页&nbsp;</span>
-            </div>
-          </div>
-        </div>
+        <!-- 分页器 -->
+        <Pagination
+          :total="total"
+          :pageSize="searchParams.pageSize"
+          :continues="4"
+          :pageNo="searchParams.pageNo"
+          @changePageNo="changePageNo"
+        ></Pagination>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters } from "vuex";
 export default {
   name: "Main",
-  computed:{
-    ...mapGetters('search',['trademarkList','attrsList','goodsList'])
+  props: [
+    "searchParams",
+    "getCateName",
+    "getKeyword",
+    "getTradmark",
+    "getNewTradmark",
+    "getAttr",
+    "getNewProp"
+  ],
+  computed: {
+    ...mapGetters("search", [
+      "trademarkList",
+      "attrsList",
+      "goodsList",
+      "total"
+    ]),
+    trademarkName() {
+      const { trademark } = this.searchParams;
+      return trademark ? trademark.split(":")[1] : "";
+    },
+    //判断排序方式
+    isUp() {
+      // console.log(this.searchParams.order);
+      return this.searchParams.order.split(":")[1] === "asc";
+    },
+    //判断"综合"和"价格"谁高亮
+    isPrice() {
+      return this.searchParams.order.split(":")[0] === "2";
+    }
+  },
+  methods: {
+    delCateName() {
+      this.searchParams.categoryName = "";
+      this.getCateName(this.searchParams);
+    },
+    delKeyword() {
+      this.searchParams.keyword = "";
+      this.getKeyword(this.searchParams);
+    },
+    //点击品牌调用getTradmark
+    handleTrademark(trad) {
+      // console.log(trad);
+      this.getTradmark(trad);
+    },
+    //点击品牌面包屑的删除按钮，将searchParams中的trademark设置为空，然后调用点击品牌调用getNewTradmark
+    delTrademark() {
+      this.searchParams.trademark = undefined;
+      this.getNewTradmark();
+      // let value = this.searchParams;
+      // this.getTradmark(value);
+      // console.log(this.searchParams);
+    },
+    handleAttr(attrValue, attr) {
+      // console.log(attrValue);
+      this.getAttr(attrValue, attr);
+    },
+    delProp(index) {
+      this.getNewProp(index);
+    },
+    //得到当前页数发送请求
+    changePageNo(currentPage) {
+      this.searchParams.pageNo = currentPage;
+
+      this.$store.dispatch("search/getSearchGoodsData", this.searchParams);
+    },
+    //排序
+    changeOrder(newNum) {
+      let [oldNum, oldType] = this.searchParams.order.split(":");
+      if (oldNum == newNum) {
+        this.searchParams.order = `${oldNum}:${
+          oldType == "asc" ? "desc" : "asc"
+        }`;
+      } else {
+        this.searchParams.order = `${newNum}:'asc'`;
+      }
+      this.$store.dispatch("search/getSearchGoodsData", this.searchParams);
+    }
   }
 };
 </script>

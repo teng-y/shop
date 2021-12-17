@@ -71,38 +71,43 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
-import Swiper from 'swiper'
-import 'swiper/css/swiper.min.css'
+import { mapState } from "vuex";
+import Swiper from "swiper";
+import "swiper/css/swiper.min.css";
 export default {
-  name:'Floor',
-  computed:{
-    ...mapState('home',['floorList'])
+  name: "Floor",
+  computed: {
+    ...mapState("home", ["floorList"])
   },
-  mounted(){
-    this.$store.dispatch('home/getFloorListData')
+  mounted() {
+    this.$store.dispatch("home/getFloorListData");
+  },
+  watch: {
+    floorList() {
+      this.$nextTick(() => {
+        var mySwiper = new Swiper(".floor-container", {
+          // direction: "vertical", // 垂直切换选项
+          loop: true, // 循环模式选项
+          // autoplay: true,
+          // delay: 1000,
+          autoplay: {
+            delay: 2000, //1秒切换一次
+            disableOnInteraction: false
+          },
+          // 如果需要分页器
+          pagination: {
+            el: ".swiper-pagination",
+            clickable: true
+          },
 
-    var mySwiper = new Swiper('.floor-container', {
-      // direction: "vertical", // 垂直切换选项
-      loop: true, // 循环模式选项
-      // autoplay: true,
-      // delay: 1000,
-      autoplay: {
-        delay: 2000, //1秒切换一次
-        disableOnInteraction:false
-      },
-      // 如果需要分页器
-      pagination: {
-        el: ".swiper-pagination",
-        clickable :true,
-      },
-
-      // 如果需要前进后退按钮
-      navigation: {
-        nextEl: ".swiper-button-next",
-        prevEl: ".swiper-button-prev",
-      },
-    });
+          // 如果需要前进后退按钮
+          navigation: {
+            nextEl: ".swiper-button-next",
+            prevEl: ".swiper-button-prev"
+          }
+        });
+      });
+    }
   }
 };
 </script>

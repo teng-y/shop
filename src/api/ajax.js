@@ -2,9 +2,11 @@
 import axios from 'axios';
 import 'nprogress/nprogress.css' //引入进度条样式
 import NProgress from 'nprogress' // 引入进度条模块
+import { getUserTempId } from "../util/getUserTempId";
+import store from '@/store'
 //2、创建实例对象
 const ajax = axios.create({
-    baseURL:'http://39.98.123.211',//配置统一服务器地址
+    baseURL:'/api',//配置公共的请求路径
     timeout: 5000,
 })
 
@@ -12,6 +14,18 @@ const ajax = axios.create({
 ajax.interceptors.request.use(function (config) {
     // 在发送请求之前做些什么
     NProgress.start()
+    //统一添加请求头
+    /**   userTempId用户的临时身份标识
+     *    toke上用户登录后标识
+     * 
+     *    
+     **/
+    config.headers.UserTempId = getUserTempId()
+    let token = store.state.user.token
+    if(token){
+      config.headers.token = token
+    }
+    
     return config;
   }, function (error) {
     // 对请求错误做些什么
